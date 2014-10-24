@@ -65,7 +65,11 @@ pageflow.pageType.register('background_video', _.extend({
     this.updateCommonPageCssClasses(pageElement, configuration);
     pageElement.find('.shadow').css({opacity: configuration.get('gradient_opacity') / 100});
 
-    var videoPlayer = this.videoPlayer;
+    var videoPlayer = this.videoPlayer,
+        x = configuration.getFilePosition('video_file_id', 'x') || 50,
+        y = configuration.getFilePosition('video_file_id', 'y') || 50,
+        posterUrl = configuration.getVideoPosterUrl();
+
     videoPlayer.ensureCreated();
 
     if (!this.srcDefined) {
@@ -79,24 +83,16 @@ pageflow.pageType.register('background_video', _.extend({
       this.videoPlayer.src(configuration.getVideoFileSources('video_file_id'));
     }
 
-    pageElement.find('.background_image').css({
-      backgroundImage: 'url("' + configuration.getVideoPosterUrl() + '")'
-    });
-
-    this.updateVideoPoster(pageElement, configuration.getVideoPosterUrl());
-
-    this._resizeToCover(pageElement,
-                        configuration.getFilePosition('video_file_id', 'x'),
-                        configuration.getFilePosition('video_file_id', 'y')
-    );
+    this.updateBackgroundVideoPosters(pageElement, posterUrl, x, y);
+    this._resizeToCover(pageElement, x, y);
   },
 
   _initVideoPlayer: function (pageElement, configuration) {
     var that = this;
     var template = pageElement.find('[data-template=video]');
 
-    var x = configuration.video_file_x;
-    var y = configuration.video_file_y;
+    var x = configuration.video_file_x || 50;
+    var y = configuration.video_file_y || 50;
 
     this.min_w = 300; // minimum video width allowed
     this.vid_w_orig = template.attr("data-video-width") || 1280;
@@ -130,8 +126,6 @@ pageflow.pageType.register('background_video', _.extend({
 
     // now scale the video
     video.width(scale * this.vid_w_orig).height(scale * this.vid_h_orig);
-
-    console.log('video x: ' + ((video.width() - jQuery(window).width()) * x / 100) + "px, y: " + ((video.height() - jQuery(window).height()) * y / 100) + "px");
 
     video.css({
       "left": "-" + ((video.width() - jQuery(window).width()) * x / 100) + "px",
