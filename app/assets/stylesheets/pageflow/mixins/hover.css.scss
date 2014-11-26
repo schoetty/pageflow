@@ -1,5 +1,5 @@
 @mixin hover {
-  .has_no_mobile_platform &:hover {
+  .has_no_mobile_platform &:hover, &.active {
     @content;
   }
 }
