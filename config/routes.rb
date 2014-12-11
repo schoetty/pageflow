@@ -49,6 +49,8 @@ Pageflow::Engine.routes.draw do
     root :to => redirect('/admin')
   end
 
+  get '/robots.:format' => 'robots#show'
+
   get ':entry_id/videos/:id', :to => 'files#show', :as => :short_video_file, :defaults => {:collection_name => 'video_files'}
   get ':entry_id/audio/:id', :to => 'files#show', :as => :short_audio_file, :defaults => {:collection_name => 'audio_files'}
 

@@ -38,6 +38,12 @@ module Pageflow
       PublishedEntry.new(scope.published.find(id))
     end
 
+    def self.all(scope = Entry)
+      scope.published.map do |entry|
+        PublishedEntry.new(entry)
+      end
+    end
+
     def cache_key
       "#{self.class.model_name.cache_key}/#{entry.cache_key}-#{revision.cache_key}"
     end
